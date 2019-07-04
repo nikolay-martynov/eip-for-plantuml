@@ -1,0 +1,36 @@
+= EIP sprites for PlantUML
+
+[WARNING]
+This is work in progress.
+
+This is inspired by unofficial PlantUML EIP library
+by _aheil_ https://github.com/aheil/EIP-PlantUML
+
+The difference is that it was kind of small in terms of
+number of shapes and very buggy.
+Mix of C#, bash and lack of build automation did not
+allow to effectively fix the problems.
+
+Instead, this sprite library is based on
+Enterprise Integration Pattern Shapes for Gliffy
+https://github.com/comsysto/enterprise-integration-pattern-shapes-for-gliffy
+
+It is a pure sprite library just as
+standard Cloudinsight PlantUML sprites library
+https://github.com/rabelenda/cicon-plantuml-sprites
+
+The nice thing about sprite library vs macro/function library
+is that you have much more control over appearance
+when writing your diagram.
+
+All sprites come in multiple sizes determined by sprite name
+suffix:
+
+.Sprite sizes
+|===
+|Suffix|Size
+
+|Small|50
+||100
+|Large|200
+|===
