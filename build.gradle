@@ -1,7 +1,11 @@
+import net.sourceforge.plantuml.ugraphic.sprite.SpriteGrayLevel
+import net.sourceforge.plantuml.ugraphic.sprite.SpriteUtils
 import org.apache.batik.transcoder.TranscoderInput
 import org.apache.batik.transcoder.TranscoderOutput
 import org.apache.batik.transcoder.image.PNGTranscoder
 import org.apache.commons.text.CaseUtils
+
+import javax.imageio.ImageIO
 
 buildscript {
     repositories {
@@ -20,10 +24,25 @@ Map<String, Integer> imageSizes = [
         Large: 200,
 ]
 
+File pngDir = new File(project.buildDir, 'png')
+File spriteDir = file('dist')
+
+static String svgPatternNameToSpriteBaseName(String svgPatternName) {
+    CaseUtils.toCamelCase(svgPatternName, true,
+            '-' as char,
+            '_' as char,
+            ' ' as char).replaceAll('[-_ ]', '')
+}
+
+static Tuple2<String, String> svgNameToGroupAndPatternName(String svgFileName) {
+    def (unused, group, pattern) = (svgFileName =~ /([\w-]+?)__(.+)\.svg/)[0]
+    new Tuple2<>(group, pattern)
+}
+
 task convertSvgToPng {
     description "Converts EIP SVG shapes into PNG files of different sizes"
     doLast {
-        project.buildDir.mkdirs()
+        pngDir.mkdirs()
         file("enterprise-integration-pattern-shapes-for-gliffy/eip-svg-shapes").
                 eachFileRecurse(groovy.io.FileType.FILES) { svgFile ->
                     if (!svgFile.name.endsWith('svg')) {
@@ -32,22 +51,70 @@ task convertSvgToPng {
                     imageSizes.each { sizeName, sizeWidth ->
                         svgFile.withInputStream { svgStream ->
                             TranscoderInput transcoderInput = new TranscoderInput(svgStream)
-                            String patternName = (svgFile.name =~ /[\w-]+__(.+)\.svg/)[0][1]
-                            String spriteName = CaseUtils.toCamelCase(patternName, true,
-                                    '-' as char,
-                                    '_' as char,
-                                    ' ' as char).replaceAll('[-_ ]', '') + sizeName
+                            String patternName = svgNameToGroupAndPatternName(svgFile.name).second
+                            String spriteName = svgPatternNameToSpriteBaseName(patternName) + sizeName
                             String pngName = spriteName + '.png'
-                            new File(project.buildDir, pngName).withOutputStream { pngStream ->
+                            new File(pngDir, pngName).withOutputStream { pngStream ->
                                 TranscoderOutput transcoderOutput = new TranscoderOutput(pngStream)
                                 PNGTranscoder transcoder = new PNGTranscoder().tap {
                                     addTranscodingHint(PNGTranscoder.KEY_WIDTH, sizeWidth as Float)
+                                    addTranscodingHint(PNGTranscoder.KEY_BACKGROUND_COLOR, java.awt.Color.WHITE)
                                 }
                                 transcoder.transcode(transcoderInput, transcoderOutput)
                             }
                         }
                     }
                 }
+    }
+}
+
+task convertPngToSprite {
+    description "Converts PNG files to PlantUML sprites"
+    doLast {
+        spriteDir.mkdirs()
+        String pngExtension = '.png'
+        new File(spriteDir, project.name + '.puml').withPrintWriter { output ->
+            pngDir.eachFile(groovy.io.FileType.FILES) { pngFile ->
+                if (!pngFile.name.endsWith(pngExtension)) {
+                    return
+                }
+                pngFile.withInputStream { input ->
+                    String spriteName = 'EIP_' + pngFile.name[0..<-pngExtension.size()]
+                    output.println(SpriteUtils.encodeCompressed(
+                            ImageIO.read(input), spriteName, SpriteGrayLevel.GRAY_16))
+                }
+            }
+        }
+    }
+    dependsOn convertSvgToPng
+}
+
+task generateExample {
+    description "Generates example diagram with every sprite"
+    doLast {
+        Map<String, List<String>> patternCatalog = [:]
+        project.file("enterprise-integration-pattern-shapes-for-gliffy/eip-svg-shapes").
+                eachFileRecurse(groovy.io.FileType.FILES) { svgFile ->
+                    if (!svgFile.name.endsWith('svg')) {
+                        return
+                    }
+                    Tuple2<String, String> groupAndPattern = svgNameToGroupAndPatternName(svgFile.name)
+                    patternCatalog[groupAndPattern.first] = patternCatalog[groupAndPattern.first] ?: []
+                    patternCatalog[groupAndPattern.first] << groupAndPattern.second
+                }
+        new File(project.buildDir, "all-sprites.puml").withPrintWriter { output ->
+            output.println "@startuml"
+            output.println "!include ../dist/eip-for-plantuml.puml"
+            patternCatalog.keySet().sort().each { group ->
+                output.println "package \"${group.replaceAll('-', ' ')}\" {"
+                patternCatalog[group].sort().each { patternSvgName ->
+                    String spriteBaseName = svgPatternNameToSpriteBaseName(patternSvgName)
+                    output.println "\trectangle \"<\$EIP_$spriteBaseName>\\n\$EIP_$spriteBaseName\" as $spriteBaseName"
+                }
+                output.println "}"
+            }
+            output.println "@enduml"
+        }
     }
 }
 
