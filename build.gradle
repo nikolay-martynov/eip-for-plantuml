@@ -124,9 +124,9 @@ task generateExample {
 }
 
 plantUml {
-    render input: 'diagrams/example.puml', output: 'generated-examples/example.png', withMetadata: false
-    render input: 'diagrams/sizes.puml', output: 'generated-examples/sizes.png', withMetadata: false
-    render input: 'build/all-sprites.puml', output: 'generated-examples/all-sprites.png', withMetadata: false
+    render input: 'diagrams/example.puml', output: 'generated-examples/example.svg', withMetadata: false
+    render input: 'diagrams/sizes.puml', output: 'generated-examples/sizes.svg', withMetadata: false
+    render input: 'build/all-sprites.puml', output: 'generated-examples/all-sprites.svg', withMetadata: false
 }
 
 project.tasks.getByName("plantUml") {
