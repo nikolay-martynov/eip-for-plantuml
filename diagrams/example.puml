@@ -1,0 +1,16 @@
+@startuml
+!includeurl https://raw.githubusercontent.com/nikolay-martynov/eip-for-plantuml/master/dist/eip-for-plantuml.puml
+legend top
+    You can use sprite
+    anywhere you can use text.
+    Rectangle content is most
+    convenient.
+endlegend
+rectangle "<$EIP_MessageDouble>\nNew order" as newOrder
+rectangle "<$EIP_Splitter>\nSplitter" as splitter
+rectangle "<$EIP_MessageSingleGreen>\nOrder item 1" as item1
+rectangle "<$EIP_MessageSingleOrange>\nOrder item 2" as item2
+newOrder -> splitter
+splitter -> item1
+item1 -[hidden] item2
+@enduml

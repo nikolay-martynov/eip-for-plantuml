@@ -23,6 +23,42 @@ The nice thing about sprite library vs macro/function library
 is that you have much more control over appearance
 when writing your diagram.
 
+== Usage
+
+First of all, include sprite library into your diagram:
+```
+!includeurl https://raw.githubusercontent.com/nikolay-martynov/eip-for-plantuml/master/dist/eip-for-plantuml.puml
+```
+Instead of master head you can specify any tag existing on GutHub. You can also
+just download the file and add it to your project resources.
+
+Once included, you can use any sprite from the library just as any other sprite.
+You can read about sprites here: http://plantuml.com/sprite
+
+The following example mimics splitter diagram from
+https://www.enterpriseintegrationpatterns.com/patterns/messaging/Sequencer.html
+
+image::generated-examples/example.png[]
+
+```
+@startuml
+!includeurl https://raw.githubusercontent.com/nikolay-martynov/eip-for-plantuml/master/dist/eip-for-plantuml.puml
+legend top
+    You can use sprite
+    anywhere you can use text.
+    Rectangle content is most
+    convenient.
+endlegend
+rectangle "<$EIP_MessageDouble>\nNew order" as newOrder
+rectangle "<$EIP_Splitter>\nSplitter" as splitter
+rectangle "<$EIP_MessageSingleGreen>\nOrder item 1" as item1
+rectangle "<$EIP_MessageSingleOrange>\nOrder item 2" as item2
+newOrder -> splitter
+splitter -> item1
+item1 -[hidden] item2
+@enduml
+```
+
 All sprites come in multiple sizes determined by sprite name
 suffix:
 
@@ -34,3 +70,35 @@ suffix:
 ||100
 |Large|200
 |===
+
+image::generated-examples/sizes.png[]
+
+== List of sprites
+
+You can find description of each pattern here:
+https://www.enterpriseintegrationpatterns.com/patterns/messaging
+
+The following diagram shows all sprites available in the library:
+
+image::generated-examples/all-sprites.png[]
+
+== Building
+
+The project uses
+link:https://github.com/cosminpolifronie/gradle-plantuml-plugin[PlantUML Gradle plugin]
+to generate example images hosted on GitHub. This means you'll
+need link:https://www.graphviz.org/[GraphViz] to generate these images.
+
+Due to
+link:https://github.com/cosminpolifronie/gradle-plantuml-plugin/issues/1[issue]
+with PlantUML Gradle plugin, you'll have to run build twice:
+
+```bash
+./gradlew
+./gradlew
+```
+
+This will generate link:dist/eip-for-plantuml.puml[]
+as well as images in link:generated-examples[]
+used for GitHub documentation. These have to be added/committed
+to git.

@@ -1,0 +1,16 @@
+@startuml
+!includeurl https://raw.githubusercontent.com/nikolay-martynov/eip-for-plantuml/master/dist/eip-for-plantuml.puml
+legend top
+    All sprites come in multiple sizes.
+    Size is selected by adding suffix
+    either Small or Large
+    to base sprite name.
+    If no suffix is specified then
+    medium size sprite will be used.
+endlegend
+rectangle "Suffix=Small\n<$EIP_MessageStoreSmall>\n$EIP_MessageStoreSmall" as small
+rectangle "No suffix\n<$EIP_MessageStore>\n$EIP_MessageStore" as medium
+rectangle "Suffix=Large\n<$EIP_MessageStoreLarge>\n$EIP_MessageStoreLarge" as large
+small -> medium
+medium -> large
+@enduml

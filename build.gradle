@@ -15,7 +15,12 @@ buildscript {
         classpath group: 'org.apache.xmlgraphics', name: 'batik-transcoder', version: '1.11'
         classpath group: 'org.apache.xmlgraphics', name: 'batik-codec', version: '1.11'
         classpath group: 'org.apache.commons', name: 'commons-text', version: '1.7'
+        classpath group: 'net.sourceforge.plantuml', name: 'plantuml', version: '1.2019.7'
     }
+}
+
+plugins {
+    id "com.cosminpolifronie.gradle.plantuml" version "1.6.0"
 }
 
 Map<String, Integer> imageSizes = [
@@ -104,7 +109,7 @@ task generateExample {
                 }
         new File(project.buildDir, "all-sprites.puml").withPrintWriter { output ->
             output.println "@startuml"
-            output.println "!include ../dist/eip-for-plantuml.puml"
+            output.println "!includeurl https://raw.githubusercontent.com/nikolay-martynov/eip-for-plantuml/master/dist/eip-for-plantuml.puml"
             patternCatalog.keySet().sort().each { group ->
                 output.println "package \"${group.replaceAll('-', ' ')}\" {"
                 patternCatalog[group].sort().each { patternSvgName ->
@@ -118,9 +123,26 @@ task generateExample {
     }
 }
 
+plantUml {
+    render input: 'diagrams/example.puml', output: 'generated-examples/example.png', withMetadata: false
+    render input: 'diagrams/sizes.puml', output: 'generated-examples/sizes.png', withMetadata: false
+    render input: 'build/all-sprites.puml', output: 'generated-examples/all-sprites.png', withMetadata: false
+}
+
+project.tasks.getByName("plantUml") {
+    dependsOn generateExample
+}
+
 task clean {
     description "Cleans output directory"
     doLast {
         project.buildDir.deleteDir()
     }
 }
+
+task build {
+    description "Builds everything"
+    dependsOn convertPngToSprite, project.tasks.getByName("plantUml")
+}
+
+defaultTasks(build.name)
