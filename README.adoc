@@ -80,7 +80,7 @@ https://www.enterpriseintegrationpatterns.com/patterns/messaging
 
 The following diagram shows all sprites available in the library:
 
-image::generated-examples/all-sprites.png[]
+image::https://nikolay-martynov.github.io/eip-for-plantuml/generated-examples/all-sprites.svg[]
 
 == Building
 
