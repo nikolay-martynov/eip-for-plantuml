@@ -78,7 +78,8 @@ image::https://nikolay-martynov.github.io/eip-for-plantuml/generated-examples/si
 You can find description of each pattern here:
 https://www.enterpriseintegrationpatterns.com/patterns/messaging
 
-The following diagram shows all sprites available in the library:
+The following diagram shows all sprites available in the library
+(you can click the image to copy name of sprite you need):
 
 image::https://nikolay-martynov.github.io/eip-for-plantuml/generated-examples/all-sprites.svg[]
 

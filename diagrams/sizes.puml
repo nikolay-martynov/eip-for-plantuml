@@ -1,5 +1,6 @@
 @startuml
 !includeurl https://raw.githubusercontent.com/nikolay-martynov/eip-for-plantuml/master/dist/eip-for-plantuml.puml
+skinparam defaultTextAlignment center
 legend top
     All sprites come in multiple sizes.
     Size is selected by adding suffix

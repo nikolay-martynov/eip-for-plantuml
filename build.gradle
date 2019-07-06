@@ -108,15 +108,23 @@ task generateExample {
                     patternCatalog[groupAndPattern.first] << groupAndPattern.second
                 }
         new File(project.buildDir, "all-sprites.puml").withPrintWriter { output ->
-            output.println "@startuml"
-            output.println "!includeurl https://raw.githubusercontent.com/nikolay-martynov/eip-for-plantuml/master/dist/eip-for-plantuml.puml"
-            patternCatalog.keySet().sort().each { group ->
-                output.println "package \"${group.replaceAll('-', ' ')}\" {"
-                patternCatalog[group].sort().each { patternSvgName ->
+            output.println """@startuml
+!includeurl https://raw.githubusercontent.com/nikolay-martynov/eip-for-plantuml/master/dist/eip-for-plantuml.puml
+skinparam defaultTextAlignment center
+"""
+            patternCatalog.keySet().sort().eachWithIndex { group, groupIndex ->
+                output.println "package \"${group.replaceAll('-', ' ')}\" as g$groupIndex {"
+                patternCatalog[group].sort().eachWithIndex { patternSvgName, patternIndex ->
                     String spriteBaseName = svgPatternNameToSpriteBaseName(patternSvgName)
-                    output.println "\trectangle \"<\$EIP_$spriteBaseName>\\n\$EIP_$spriteBaseName\" as $spriteBaseName"
+                    output.println("\trectangle \"<\$EIP_$spriteBaseName>\\n\$EIP_$spriteBaseName\" as g${groupIndex}p$patternIndex")
+                    if (patternIndex > 0) {
+                        output.println "\tg${groupIndex}p${patternIndex - 1} -[hidden]right- g${groupIndex}p$patternIndex"
+                    }
                 }
                 output.println "}"
+                if (groupIndex > 0) {
+                    output.println "g${groupIndex - 1}p0 -[hidden]down- g${groupIndex}p0"
+                }
             }
             output.println "@enduml"
         }
