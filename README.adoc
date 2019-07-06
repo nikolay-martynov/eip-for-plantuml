@@ -38,7 +38,7 @@ You can read about sprites here: http://plantuml.com/sprite
 The following example mimics splitter diagram from
 https://www.enterpriseintegrationpatterns.com/patterns/messaging/Sequencer.html
 
-image::generated-examples/example.png[]
+image::https://nikolay-martynov.github.io/eip-for-plantuml/generated-examples/example.svg[]
 
 ```
 @startuml
@@ -71,7 +71,7 @@ suffix:
 |Large|200
 |===
 
-image::generated-examples/sizes.png[]
+image::https://nikolay-martynov.github.io/eip-for-plantuml/generated-examples/sizes.svg[]
 
 == List of sprites
 
