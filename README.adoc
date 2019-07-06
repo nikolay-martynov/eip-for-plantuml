@@ -1,8 +1,5 @@
 = EIP sprites for PlantUML
 
-[WARNING]
-This is work in progress.
-
 This is inspired by unofficial PlantUML EIP library
 by _aheil_ https://github.com/aheil/EIP-PlantUML
 
