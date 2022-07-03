@@ -10,7 +10,7 @@ allow to effectively fix the problems.
 
 Instead, this sprite library is based on
 Enterprise Integration Pattern Shapes for Gliffy
-https://github.com/comsysto/enterprise-integration-pattern-shapes-for-gliffy
+https://github.com/codeclou/enterprise-integration-pattern-shapes-for-gliffy
 
 It is a pure sprite library just as
 standard Cloudinsight PlantUML sprites library
